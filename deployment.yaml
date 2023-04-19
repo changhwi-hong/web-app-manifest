@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-python-web-app
+spec:
+  selector:
+    matchLabels:
+      app: my-python-web-app
+  template:
+    metadata:
+      labels:
+        app: my-python-web-app
+    spec:
+      containers:
+      - name: my-python-web-app
+        image: ghcr.io/changhwi-hong/webapp:1
+        env:
+          - name: POSTGRES_HOST
+            value: postgresql-cluster-rw
+          - name : POSTGRES_PORT
+            value: "5432"
+          - name : POSTGRES_DATABASE
+            value: dvdrental
+          - name : POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-cluster-superuser
+                key: username
+          - name : POSTGRES_PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-cluster-superuser
+                key: password
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5002
+       
+
